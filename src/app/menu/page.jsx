@@ -12,6 +12,7 @@ const menu = [
 const Menu = () =>
 {
   const [order, setOrder] = useState([]);
+  const [tableNumber, setTableNumber] = useState(0);
 
   const handleOrder = (item) =>
   {
@@ -29,13 +30,19 @@ const Menu = () =>
   const placeOrder = async () =>
   {
     console.log('Placing order:', order);
+    console.log('Table number:', tableNumber);
     try {
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ order }),
+        body: JSON.stringify(
+          {
+            tableNumber,
+            items: order.map(item => item.name),
+            count: 1,
+          }),
       });
 
       if (!response.ok) {
@@ -57,6 +64,12 @@ const Menu = () =>
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold">Menu</h1>
+      <input
+        type="text"
+        placeholder="Table Number"
+        value={tableNumber}
+        onChange={(e) => setTableNumber(e.target.value)}
+      />
       <div id="menu">
         {menu.map(item => (
           <div key={item.id}>

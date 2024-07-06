@@ -5,6 +5,7 @@ const next = require('next');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { Server } = require('socket.io');
+const { count } = require('console');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -30,6 +31,7 @@ app.prepare().then(() =>
   const orderSchema = new mongoose.Schema({
     tableNumber: Number,
     items: [String],
+    count: Number,
     status: String, // "pending", "preparing", "served"
   });
 
@@ -41,8 +43,8 @@ app.prepare().then(() =>
   server.post('/api/orders', async (req, res) =>
   {
     try {
-      const { tableNumber, items } = req.body;
-      const order = new Order({ tableNumber, items, status: 'pending' });
+      const { tableNumber, items, count } = req.body;
+      const order = new Order({ tableNumber, items, count, status: 'pending' });
       await order.save();
       io.emit('new-order', order); // Notify all clients about the new order
       res.status(201).json(order);
