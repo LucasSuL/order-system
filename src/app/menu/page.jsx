@@ -9,32 +9,48 @@ const menu = [
   // 添加更多菜品
 ];
 
-const Menu = () => {
+const Menu = () =>
+{
   const [order, setOrder] = useState([]);
 
-  const handleOrder = (item) => {
-    setOrder((prevOrder) => [...prevOrder, item]);
+  const handleOrder = (item) =>
+  {
+    setOrder((prevOrder) =>
+    {
+      // 确保不会重复添加同一个菜品
+      if (prevOrder.some(orderItem => orderItem.id === item.id)) {
+        return prevOrder.filter(orderItem => orderItem.id !== item.id);
+      } else {
+        return [...prevOrder, item];
+      }
+    });
   };
 
-  const placeOrder = async () => {
-    console.log(order);
+  const placeOrder = async () =>
+  {
+    console.log('Placing order:', order);
     try {
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(order),
+        body: JSON.stringify({ order }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit order');
+        const errorText = await response.text();
+        throw new Error(`Failed to submit order: ${errorText}`);
       }
+
+      const responseData = await response.json();
+      console.log('Order response:', responseData);
 
       alert('订单已提交');
       setOrder([]);
     } catch (error) {
       console.error('Error submitting order:', error);
+      alert(`Error submitting order: ${error.message}`);
     }
   };
 
@@ -44,7 +60,11 @@ const Menu = () => {
       <div id="menu">
         {menu.map(item => (
           <div key={item.id}>
-            <input type="checkbox" id={`item${item.id}`} onChange={() => handleOrder(item)} />
+            <input
+              type="checkbox"
+              id={`item${item.id}`}
+              onChange={() => handleOrder(item)}
+            />
             {item.name} - ${item.price}
           </div>
         ))}
