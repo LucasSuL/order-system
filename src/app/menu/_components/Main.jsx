@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ShoppingBag, ShoppingCart } from "lucide-react";
+import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 
 const tags = [
   "烤串",
@@ -291,11 +291,51 @@ const foods = [
 
 const Main = () => {
   const [cart, setCart] = useState([]);
+  const [sum, setSum] = useState(0);
 
-  const handleClick = (name) => {
-    const newProduct = { name, quantity: 1 };
-    setCart([...cart, newProduct]);
+  const calcSum = () => {
+    const sum = cart.reduce(
+      (sum, item) => sum + parseFloat(item.price) * item.quantity,
+      0
+    );
+    setSum(sum);
   };
+
+  useEffect(() => {
+    calcSum();
+  }, [cart]);
+
+  const handleClick = (product) => {
+    const newProduct = { ...product, quantity: 1 };
+    setCart([...cart, newProduct]);
+    console.log(sum);
+  };
+
+  const handleAdd = (name) => {
+    setCart(
+      cart.map((item) =>
+        item.name === name ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  const handleMinus = (name) => {
+    setCart(
+      cart
+        .map((item) =>
+          item.name === name ? { ...item, quantity: item.quantity - 1 } : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const isInCart = (name) => {
+    return cart.some((item) => item.name === name);
+  };
+
+  const handleSubmit = ()=>{
+    console.log(cart);
+  }
 
   return (
     <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
@@ -342,13 +382,40 @@ const Main = () => {
                     </div>
                     <div className="flex justify-between align-middle font-bold">
                       ${product.price}
-                      <Button
-                        size="xs"
-                        className="px-2"
-                        onClick={() => handleClick(product.name)}
-                      >
-                        加入Add
-                      </Button>
+                      {isInCart(product.name) ? (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            className="rounded-full "
+                            size="xs"
+                            variant="outline"
+                            onClick={() => handleMinus(product.name)}
+                          >
+                            <Minus className="w-5 h-5" />
+                          </Button>
+                          <span>
+                            {
+                              cart.find((item) => item.name === product.name)
+                                .quantity
+                            }
+                          </span>
+                          <Button
+                            className="rounded-full "
+                            size="xs"
+                            variant="outline"
+                            onClick={() => handleAdd(product.name)}
+                          >
+                            <Plus className="w-5 h-5" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          size="xs"
+                          className="px-2"
+                          onClick={() => handleClick(product)}
+                        >
+                          加入Add
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -358,18 +425,18 @@ const Main = () => {
         </div>
       </ScrollArea>
 
-      {cart && (
+      {cart.length > 0 && (
         <footer className="absolute bottom-0 left-0 bg-black h-[60px] w-full z-50 flex">
           <div className="w-2/3 bg-gray-200 p-4 flex items-center gap-4">
             <ShoppingBag className="w-8 h-8" />
             <p>
-              $<strong className="text-xl">38</strong>
+              $<strong className="text-xl"> {sum}</strong>
             </p>
           </div>
-          <div className="w-1/3 bg-black p-1 text-center align-middle">
+          <button onClick = {()=>handleSubmit()}className="w-1/3 bg-black p-1 text-center align-middle">
             <p className="font-bold text-lime-50">Checkout </p>
             <p className="text-sm text-gray-300">结算 </p>
-          </div>
+          </button>
         </footer>
       )}
     </div>
