@@ -14,11 +14,13 @@ const CheckoutPage = () => {
   console.log(cart);
 
   return (
-    <div>
+    <div className="relative h-screen ">
       <Header />
-      <div class="p-2 pt-24 h-screen bg-slate-100">
+      <div class="p-2 pt-24 bg-slate-100">
         <div className="p-2 bg-white">
-          <p className="mb-3">Table Number: 3A</p>
+          <p className="">
+            Table Number: <span className="font-bold">3A</span>
+          </p>
         </div>
 
         <div className="p-2 bg-white mt-2">
@@ -44,8 +46,11 @@ const CheckoutPage = () => {
           <p className="mb-1">备注：</p>
           <Textarea placeholder="Type your message here." id="message" />
         </div>
+        <div className="bg-white mt-2 p-2 mb-16">
+          <p className="mb-1">推荐：</p>
+        </div>
       </div>
-      <footer className="absolute bottom-0 left-0 bg-black h-[60px] w-full z-50 flex">
+      <footer className="fixed bottom-0 left-0 bg-black h-[60px] w-full z-50 flex">
         <div className="w-2/3 bg-gray-200 p-4 flex items-center gap-4">
           <ShoppingBag className="w-8 h-8" />
           <p>

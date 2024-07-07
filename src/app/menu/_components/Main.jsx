@@ -355,18 +355,18 @@ const Main = () => {
 
   return (
     <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
-      <div class="w-32 bg-white shadow-lg">
-        <ScrollArea className="mt-1">
+      <div class="w-32 bg-white">
+        <ScrollArea className="mt-1 border">
           <div className="">
             {tags.map((tag) => (
-              <div key={tag} className="text-sm text-gray-600 mb-3">
+              <div key={tag} className="text-sm text-gray-600 mb-8">
                 <Link
                   href={`#${tag}`}
                   className="hover:font-bold hover:text-black"
                 >
                   {tag}
                 </Link>
-                <Separator className="mt-3" />
+                {/* <Separator className="mt-3" /> */}
               </div>
             ))}
           </div>
