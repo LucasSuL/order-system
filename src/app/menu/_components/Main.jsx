@@ -289,17 +289,50 @@ const foods = [
   },
 ];
 
-const Main = () => {
+const Main = () =>
+{
   const [cart, setCart] = useState([]);
 
-  const handleClick = (name) => {
+  const handleClick = (name) =>
+  {
     const newProduct = { name, quantity: 1 };
     setCart([...cart, newProduct]);
   };
 
+  const placeOrder = async () =>
+  {
+    console.log("Now placing order:");
+    try {
+      const response = await fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          {
+            // tableNumber,
+            items: cart,
+          }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to submit order: ${errorText}`);
+      }
+
+      const responseData = await response.json();
+      console.log('Order response:', responseData);
+
+      alert('订单已提交');
+    } catch (error) {
+      console.error('catched error in placeOrder():', error);
+      alert(`Error submitting order: ${error.message}`);
+    }
+  };
+
   return (
-    <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
-      <div class="w-32 bg-white shadow-lg">
+    <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
+      <div className="w-32 bg-white shadow-lg">
         <ScrollArea className="mt-1">
           <div className="">
             {tags.map((tag) => (
@@ -366,7 +399,7 @@ const Main = () => {
               $<strong className="text-xl">38</strong>
             </p>
           </div>
-          <div className="w-1/3 bg-black p-1 text-center align-middle">
+          <div className="w-1/3 bg-black p-1 text-center align-middle" onClick={placeOrder}>
             <p className="font-bold text-lime-50">Checkout </p>
             <p className="text-sm text-gray-300">结算 </p>
           </div>

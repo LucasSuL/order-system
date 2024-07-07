@@ -11,10 +11,13 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-mongoose.connect('mongodb://localhost:27017/orders', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect('mongodb://localhost:27017/orders', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+console.log("Server started...............")
+var allOrders = [];
 
 app.prepare().then(() =>
 {
@@ -28,33 +31,36 @@ app.prepare().then(() =>
 
   global.io = io;
 
-  const orderSchema = new mongoose.Schema({
-    tableNumber: Number,
-    items: [String],
-    count: Number,
-    status: String, // "pending", "preparing", "served"
-  });
+  
+  // const orderSchema = new mongoose.Schema({
+  //   tableNumber: Number,
+  //   items: [String],
+  //   count: Number,
+  //   status: String, // "pending", "preparing", "served"
+  // });
 
-  const Order = mongoose.model('Order', orderSchema);
+  // const Order = mongoose.model('Order', orderSchema);
 
   server.use(cors());
   server.use(express.json());
 
+
   server.post('/api/orders', async (req, res) =>
   {
     try {
-      const { tableNumber, items, count } = req.body;
-      const order = new Order({ tableNumber, items, count, status: 'pending' });
-      await order.save();
-      io.emit('new-order', order); // Notify all clients about the new order
-      res.status(201).json(order);
+      const { items } = req.body;
+      allOrders.push(items);
+      // await order.save();
+      io.emit('new-order', items); // Notify all clients about the new order
+      res.status(201).json(items);
     } catch (error) {
       console.error('Error creating order:', error);
       res.status(500).send('Internal Server Error');
     }
   });
 
-  server.get('/api/orders', async (req, res) =>
+/*
+  app.get('/api/orders', async (req, res) =>
   {
     try {
       const orders = await Order.find();
@@ -64,6 +70,7 @@ app.prepare().then(() =>
       res.status(500).send('Internal Server Error');
     }
   });
+  */
 
   io.on('connection', (socket) =>
   {
