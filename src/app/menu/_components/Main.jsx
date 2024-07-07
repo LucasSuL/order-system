@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 const tags = [
   "烤串",
@@ -292,6 +294,18 @@ const foods = [
 const Main = () => {
   const [cart, setCart] = useState([]);
   const [sum, setSum] = useState(0);
+  const [serialCart, setSerialCart] = useState("");
+  const [sessionId, setSessionId] = useState("");
+
+  useEffect(() => {
+    // Generate a unique session ID if not already present
+    let sessionId = localStorage.getItem("sessionId");
+    if (!sessionId) {
+      sessionId = uuidv4();
+      localStorage.setItem("sessionId", sessionId);
+    }
+    setSessionId(sessionId);
+  }, []);
 
   const calcSum = () => {
     const sum = cart.reduce(
@@ -303,6 +317,8 @@ const Main = () => {
 
   useEffect(() => {
     calcSum();
+    // Serialize cart object to a string
+    // setSerialCart(JSON.stringify(cart));
   }, [cart]);
 
   const handleClick = (product) => {
@@ -333,9 +349,9 @@ const Main = () => {
     return cart.some((item) => item.name === name);
   };
 
-  const handleSubmit = ()=>{
+  const handleSubmit = () => {
     console.log(cart);
-  }
+  };
 
   return (
     <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
@@ -374,7 +390,7 @@ const Main = () => {
                     height={70}
                     alt={product.name}
                   ></Image>
-                  <div className="w-full border">
+                  <div className="w-full">
                     <div className="font-bold text-lg">{product.name_eng}</div>
                     <div className="font-bold mb-1">{product.name}</div>
                     <div className="text-xs text-slate-600 mb-2">
@@ -433,10 +449,16 @@ const Main = () => {
               $<strong className="text-xl"> {sum}</strong>
             </p>
           </div>
-          <button onClick = {()=>handleSubmit()}className="w-1/3 bg-black p-1 text-center align-middle">
-            <p className="font-bold text-lime-50">Checkout </p>
+          <Link
+            href={{
+              pathname: `/checkout/${sessionId}`,
+              query: { cart: JSON.stringify(cart), sum: sum },
+            }}
+            className="w-1/3 bg-black p-1 text-center align-middle"
+          >
+            <p className="font-bold text-lime-50 text-lg">Checkout </p>
             <p className="text-sm text-gray-300">结算 </p>
-          </button>
+          </Link>
         </footer>
       )}
     </div>
