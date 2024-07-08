@@ -2,310 +2,39 @@
 
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { foods, tags } from "@/config/product";
 
-const tags = [
-  "烤串",
-  "主食",
-  "饮料",
-  "凉菜",
-  "热菜",
-  "甜品",
-  "汤类",
-  "烧烤",
-  "海鲜",
-  "素菜",
-  "肉类",
-  "小吃",
-];
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
-const foods = [
-  {
-    cat: "烤串",
-    products: [
-      {
-        name: "羊肉串",
-        name_eng: "Lamb Skewers",
-        price: "20",
-        desc: "香嫩多汁的羊肉串",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "牛肉串",
-        name_eng: "Beef Skewers",
-        price: "30",
-        desc: "美味可口的牛肉串",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "鸡肉串",
-        name_eng: "Chicken Skewers",
-        price: "25",
-        desc: "鲜嫩多汁的鸡肉串",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "猪肉串",
-        name_eng: "Pork Skewers",
-        price: "22",
-        desc: "香酥入味的猪肉串",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "蔬菜串",
-        name_eng: "Vegetable Skewers",
-        price: "15",
-        desc: "健康美味的蔬菜串",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "主食",
-    products: [
-      {
-        name: "烤馒头",
-        name_eng: "Baked Mantou",
-        price: "10",
-        desc: "香脆的烤馒头",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "烤面包",
-        name_eng: "Toasted Bread",
-        price: "15",
-        desc: "松软的烤面包",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "饮料",
-    products: [
-      {
-        name: "可乐",
-        name_eng: "Cola",
-        price: "5",
-        desc: "清爽解渴的可乐",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "雪碧",
-        name_eng: "Sprite",
-        price: "5",
-        desc: "冰凉可口的雪碧",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "橙汁",
-        name_eng: "Orange Juice",
-        price: "6",
-        desc: "新鲜的橙汁",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "啤酒",
-        name_eng: "Beer",
-        price: "8",
-        desc: "冰镇的啤酒",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "凉菜",
-    products: [
-      {
-        name: "凉拌黄瓜",
-        name_eng: "Cucumber Salad",
-        price: "12",
-        desc: "清爽的凉拌黄瓜",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "凉拌海带丝",
-        name_eng: "Seaweed Salad",
-        price: "15",
-        desc: "美味的凉拌海带丝",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "热菜",
-    products: [
-      {
-        name: "宫保鸡丁",
-        name_eng: "Kung Pao Chicken",
-        price: "25",
-        desc: "经典的宫保鸡丁",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "红烧排骨",
-        name_eng: "Braised Pork Ribs",
-        price: "35",
-        desc: "香嫩的红烧排骨",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "甜品",
-    products: [
-      {
-        name: "冰淇淋",
-        name_eng: "Ice Cream",
-        price: "10",
-        desc: "香草味冰淇淋",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "蛋挞",
-        name_eng: "Egg Tart",
-        price: "8",
-        desc: "酥脆的蛋挞",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "汤类",
-    products: [
-      {
-        name: "西红柿鸡蛋汤",
-        name_eng: "Tomato Egg Soup",
-        price: "12",
-        desc: "营养的西红柿鸡蛋汤",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "酸辣汤",
-        name_eng: "Hot and Sour Soup",
-        price: "14",
-        desc: "开胃的酸辣汤",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "烧烤",
-    products: [
-      {
-        name: "烤鸡翅",
-        name_eng: "Grilled Chicken Wings",
-        price: "20",
-        desc: "香喷喷的烤鸡翅",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "烤玉米",
-        name_eng: "Grilled Corn",
-        price: "10",
-        desc: "甜美的烤玉米",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "海鲜",
-    products: [
-      {
-        name: "烤虾",
-        name_eng: "Grilled Prawns",
-        price: "30",
-        desc: "鲜美的烤虾",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "烤扇贝",
-        name_eng: "Grilled Scallops",
-        price: "35",
-        desc: "美味的烤扇贝",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "素菜",
-    products: [
-      {
-        name: "炒时蔬",
-        name_eng: "Stir-fried Vegetables",
-        price: "15",
-        desc: "新鲜的炒时蔬",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "麻婆豆腐",
-        name_eng: "Mapo Tofu",
-        price: "18",
-        desc: "香辣的麻婆豆腐",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "肉类",
-    products: [
-      {
-        name: "红烧牛肉",
-        name_eng: "Braised Beef",
-        price: "40",
-        desc: "浓郁的红烧牛肉",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "香煎猪排",
-        name_eng: "Pan-fried Pork Chop",
-        price: "30",
-        desc: "美味的香煎猪排",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-  {
-    cat: "小吃",
-    products: [
-      {
-        name: "炸薯条",
-        name_eng: "French Fries",
-        price: "10",
-        desc: "酥脆的炸薯条",
-        img: "https://picsum.photos/200",
-      },
-      {
-        name: "鸡米花",
-        name_eng: "Popcorn Chicken",
-        price: "12",
-        desc: "美味的鸡米花",
-        img: "https://picsum.photos/200",
-      },
-    ],
-  },
-];
-
-const Main = () =>
-{
+const Main = () => {
+  const [goal, setGoal] = useState(1);
   const [cart, setCart] = useState([]);
   const [sum, setSum] = useState(0);
-  const [serialCart, setSerialCart] = useState("");
   const [sessionId, setSessionId] = useState("");
+  const handleSauceChange = (e) => setSelectedSauce(e.target.value);
+  const [selectedSauce, setSelectedSauce] = useState('四川麻辣炸串酱');
+
+  function onClick(adjustment) {
+    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
+  }
 
   useEffect(() => {
-    // Generate a unique session ID if not already present
-    let sessionId = localStorage.getItem("sessionId");
-    if (!sessionId) {
-      sessionId = uuidv4();
-      localStorage.setItem("sessionId", sessionId);
-    }
-    setSessionId(sessionId);
+    let id = uuidv4();
+    setSessionId(id);
   }, []);
 
   const calcSum = () => {
@@ -318,8 +47,6 @@ const Main = () =>
 
   useEffect(() => {
     calcSum();
-    // Serialize cart object to a string
-    // setSerialCart(JSON.stringify(cart));
   }, [cart]);
 
   const handleClick = (product) => {
@@ -355,8 +82,8 @@ const Main = () =>
   };
 
   return (
-    <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
-      <div class="w-32 bg-white">
+    <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
+      <div className="w-32 bg-white">
         <ScrollArea className="mt-1 border">
           <div className="">
             {tags.map((tag) => (
@@ -379,7 +106,6 @@ const Main = () =>
           {foods.map((food) => (
             <div key={food.cat} className="text-md mb-5">
               <div className="font-bold mb-2" id={food.cat}>
-                {" "}
                 {food.cat}
               </div>
               {food.products.map((product) => (
@@ -425,13 +151,137 @@ const Main = () =>
                           </Button>
                         </div>
                       ) : (
-                        <Button
-                          size="xs"
-                          className="px-2"
-                          onClick={() => handleClick(product)}
-                        >
-                          加入Add
-                        </Button>
+                        <Drawer>
+                          <DrawerTrigger asChild>
+                            <Button size="xs" className="px-2">
+                              加入Add
+                            </Button>
+                          </DrawerTrigger>
+                          <DrawerContent>
+                            <div className="p-2 px-4 w-full max-w-sm">
+                              <div className="w-full">
+                                <Image
+                                  src={product.img}
+                                  alt="img"
+                                  width={200}
+                                  height={200}
+                                ></Image>
+                                <p className="mt-2 font-bold text-2xl">
+                                  {product.name_eng}{" "}
+                                  <span className="font-medium">
+                                    {product.name}
+                                  </span>
+                                </p>
+                                <p> {product.desc}</p>
+                                <div className="bg-slate-200 p-2 mt-5 rounded-md">
+                                  <p className="font-bold mb-2">
+                                    Sauce Choice:
+                                  </p>
+                                  <fieldset className="space-y-3">
+                                    <div>
+                                      <label
+                                        htmlFor="DeliveryStandard"
+                                        className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
+                                      >
+                                        <p className="text-gray-700">
+                                          四川麻辣炸串酱 Spicy Szechuan Sauce
+                                          (recommended)
+                                        </p>
+
+                                        <p className="text-gray-900">free</p>
+
+                                        <input
+                                          type="radio"
+                                          name="DeliveryOption"
+                                          value="四川麻辣炸串酱"
+                                          id="DeliveryStandard"
+                                          className="sr-only"
+                                          checked={
+                                            selectedSauce === "四川麻辣炸串酱"
+                                          }
+                                          onChange={handleSauceChange}
+                                        />
+                                      </label>
+                                    </div>
+
+                                    <div>
+                                      <label
+                                        htmlFor="DeliveryPriority"
+                                        className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
+                                      >
+                                        <p className="text-gray-700">
+                                          麻辣底炸串酱微辣 Mild Sesame Paste
+                                          Sauce
+                                        </p>
+
+                                        <p className="text-gray-900">free</p>
+
+                                        <input
+                                          type="radio"
+                                          name="DeliveryOption"
+                                          value="麻辣底炸串酱微辣"
+                                          id="DeliveryPriority"
+                                          className="sr-only"
+                                          checked={
+                                            selectedSauce === "麻辣底炸串酱微辣"
+                                          }
+                                          onChange={handleSauceChange}
+                                        />
+                                      </label>
+                                    </div>
+                                  </fieldset>
+                                </div>
+                              </div>
+
+                              <div className="p-4 pb-0">
+                                <div className="flex items-center justify-center space-x-2">
+                                  <div className="flex justify-between">
+                                    <div className="">
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-8 w-8 shrink-0 rounded-full"
+                                        onClick={() => onClick(-1)}
+                                        disabled={goal <= 1}
+                                      >
+                                        <Minus className="h-4 w-4" />
+                                        <span className="sr-only">
+                                          Decrease
+                                        </span>
+                                      </Button>
+                                      <div className="text-7xl font-bold tracking-tighter">
+                                        {goal}
+                                      </div>
+
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-8 w-8 shrink-0 rounded-full"
+                                        onClick={() => onClick(1)}
+                                        // disabled={goal >= 400}
+                                      >
+                                        <Plus className="h-4 w-4" />
+                                        <span className="sr-only">
+                                          Increase
+                                        </span>
+                                      </Button>
+                                    </div>
+
+                                    <div className="text-[0.90rem] uppercase text-muted-foreground">
+                                      份
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <DrawerFooter>
+                                <Button>Submit</Button>
+                                <DrawerClose asChild>
+                                  <Button variant="outline">Cancel</Button>
+                                </DrawerClose>
+                              </DrawerFooter>
+                            </div>
+                          </DrawerContent>
+                        </Drawer>
                       )}
                     </div>
                   </div>
