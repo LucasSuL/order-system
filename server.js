@@ -48,8 +48,10 @@ app.prepare().then(() =>
       const items = req.body; // cannot recognize
 
       const filteredItems = items.map(item => ({
+        table: item.table,
         name: item.name,
-        quantity: item.quantity
+        quantity: item.quantity,
+        remarks: item.remarks,
       }));
       allOrders.push(...filteredItems);
       // allOrders.push(items.map(i => i));

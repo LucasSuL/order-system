@@ -8,10 +8,12 @@ import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 
 // interface Order {
-//   id: number;
+//   table: string;
 //   name: string;
 //   quantity: number;
+//   remarks?: string;
 // };
+const TestTable = "Testing table";
 
 const placeOrder = async (cart) =>
 {
@@ -21,7 +23,7 @@ const placeOrder = async (cart) =>
       name: item.name,
       quantity: item.quantity,
     })));
-    
+
     const responseData = await fetch('http://localhost:3000/api/orders', {
       method: 'POST',
       headers: {
@@ -29,8 +31,10 @@ const placeOrder = async (cart) =>
       },
       body: JSON.stringify(
         cart.map((item) => ({
+          table: TestTable,
           name: item.name,
           quantity: item.quantity,
+          remarks: item.remarks,
         }))),
     })
       .then(response =>
