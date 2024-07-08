@@ -2,28 +2,39 @@
 
 import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { foods, tags } from "@/config/product";
 
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+
 const Main = () => {
+  const [goal, setGoal] = useState(1);
   const [cart, setCart] = useState([]);
   const [sum, setSum] = useState(0);
   const [sessionId, setSessionId] = useState("");
+  const handleSauceChange = (e) => setSelectedSauce(e.target.value);
+  const [selectedSauce, setSelectedSauce] = useState('四川麻辣炸串酱');
+
+  function onClick(adjustment) {
+    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
+  }
 
   useEffect(() => {
-    // Generate a unique session ID if not already present
-    let sessionId = localStorage.getItem("sessionId");
-    if (!sessionId) {
-      sessionId = uuidv4();
-      localStorage.setItem("sessionId", sessionId);
-    }
-    setSessionId(sessionId);
+    let id = uuidv4();
+    setSessionId(id);
   }, []);
 
   const calcSum = () => {
@@ -71,8 +82,8 @@ const Main = () => {
   };
 
   return (
-    <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
-      <div class="w-32 bg-white">
+    <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
+      <div className="w-32 bg-white">
         <ScrollArea className="mt-1 border">
           <div className="">
             {tags.map((tag) => (
@@ -95,7 +106,6 @@ const Main = () => {
           {foods.map((food) => (
             <div key={food.cat} className="text-md mb-5">
               <div className="font-bold mb-2" id={food.cat}>
-                {" "}
                 {food.cat}
               </div>
               {food.products.map((product) => (
@@ -141,20 +151,137 @@ const Main = () => {
                           </Button>
                         </div>
                       ) : (
-                        <Link
-                          href={{
-                            pathname: `/menu/preview/${sessionId}`,
-                            query: { name: product.name, sum: sum },
-                          }}
-                        >
-                          <Button
-                            size="xs"
-                            className="px-2"
-                            // onClick={() => handleClick(product)}
-                          >
-                            加入Add
-                          </Button>
-                        </Link>
+                        <Drawer>
+                          <DrawerTrigger asChild>
+                            <Button size="xs" className="px-2">
+                              加入Add
+                            </Button>
+                          </DrawerTrigger>
+                          <DrawerContent>
+                            <div className="p-2 px-4 w-full max-w-sm">
+                              <div className="w-full">
+                                <Image
+                                  src={product.img}
+                                  alt="img"
+                                  width={200}
+                                  height={200}
+                                ></Image>
+                                <p className="mt-2 font-bold text-2xl">
+                                  {product.name_eng}{" "}
+                                  <span className="font-medium">
+                                    {product.name}
+                                  </span>
+                                </p>
+                                <p> {product.desc}</p>
+                                <div className="bg-slate-200 p-2 mt-5 rounded-md">
+                                  <p className="font-bold mb-2">
+                                    Sauce Choice:
+                                  </p>
+                                  <fieldset className="space-y-3">
+                                    <div>
+                                      <label
+                                        htmlFor="DeliveryStandard"
+                                        className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
+                                      >
+                                        <p className="text-gray-700">
+                                          四川麻辣炸串酱 Spicy Szechuan Sauce
+                                          (recommended)
+                                        </p>
+
+                                        <p className="text-gray-900">free</p>
+
+                                        <input
+                                          type="radio"
+                                          name="DeliveryOption"
+                                          value="四川麻辣炸串酱"
+                                          id="DeliveryStandard"
+                                          className="sr-only"
+                                          checked={
+                                            selectedSauce === "四川麻辣炸串酱"
+                                          }
+                                          onChange={handleSauceChange}
+                                        />
+                                      </label>
+                                    </div>
+
+                                    <div>
+                                      <label
+                                        htmlFor="DeliveryPriority"
+                                        className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
+                                      >
+                                        <p className="text-gray-700">
+                                          麻辣底炸串酱微辣 Mild Sesame Paste
+                                          Sauce
+                                        </p>
+
+                                        <p className="text-gray-900">free</p>
+
+                                        <input
+                                          type="radio"
+                                          name="DeliveryOption"
+                                          value="麻辣底炸串酱微辣"
+                                          id="DeliveryPriority"
+                                          className="sr-only"
+                                          checked={
+                                            selectedSauce === "麻辣底炸串酱微辣"
+                                          }
+                                          onChange={handleSauceChange}
+                                        />
+                                      </label>
+                                    </div>
+                                  </fieldset>
+                                </div>
+                              </div>
+
+                              <div className="p-4 pb-0">
+                                <div className="flex items-center justify-center space-x-2">
+                                  <div className="flex justify-between">
+                                    <div className="">
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-8 w-8 shrink-0 rounded-full"
+                                        onClick={() => onClick(-1)}
+                                        disabled={goal <= 1}
+                                      >
+                                        <Minus className="h-4 w-4" />
+                                        <span className="sr-only">
+                                          Decrease
+                                        </span>
+                                      </Button>
+                                      <div className="text-7xl font-bold tracking-tighter">
+                                        {goal}
+                                      </div>
+
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        className="h-8 w-8 shrink-0 rounded-full"
+                                        onClick={() => onClick(1)}
+                                        // disabled={goal >= 400}
+                                      >
+                                        <Plus className="h-4 w-4" />
+                                        <span className="sr-only">
+                                          Increase
+                                        </span>
+                                      </Button>
+                                    </div>
+
+                                    <div className="text-[0.90rem] uppercase text-muted-foreground">
+                                      份
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <DrawerFooter>
+                                <Button>Submit</Button>
+                                <DrawerClose asChild>
+                                  <Button variant="outline">Cancel</Button>
+                                </DrawerClose>
+                              </DrawerFooter>
+                            </div>
+                          </DrawerContent>
+                        </Drawer>
                       )}
                     </div>
                   </div>

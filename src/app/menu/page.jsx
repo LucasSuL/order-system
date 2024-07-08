@@ -1,7 +1,7 @@
 // src/app/menu/page.js
 
 import Main from "./_components/Main";
-import MenuLayout from "./menuLayout";
+import MenuLayout from "./MenuLayout";
 
 const MenuPage = () => {
   return (

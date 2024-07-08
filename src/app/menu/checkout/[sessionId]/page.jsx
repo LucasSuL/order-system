@@ -49,7 +49,7 @@ const CheckoutPage = () =>
   const searchParams = useSearchParams();
   const cart = JSON.parse(searchParams.get("cart"));
   const sum = searchParams.get("sum");
-  console.log(cart);
+  // console.log(cart);
 
   return (
     <div className="relative h-screen ">
