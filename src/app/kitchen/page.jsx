@@ -3,17 +3,40 @@
 import { useEffect, useState } from 'react';
 import { socket } from '@/utils/socket';
 
-const Kitchen = () => {
+
+const Kitchen = () =>
+{
   const [orders, setOrders] = useState([]);
 
-  useEffect(() => {
-    socket.on('order', (order) => {
-      setOrders((prevOrders) => [...prevOrders, order]);
+  useEffect(() =>
+  {
+    fetch('http://localhost:3000/api/orders', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response =>
+      {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch orders:', response.statusText);
+        }
+      })
+      .then(data => setOrders(data))
+      .catch(error => console.error('Error fetching orders:', error));
+
+
+    socket.on('updateKitchenOrders', (order) =>
+    {
+      setOrders(order);
       // const audio = new Audio('/notification.mp3');
       // audio.play();
     });
 
-    return () => {
+    return () =>
+    {
       socket.off('order');
     };
   }, []);

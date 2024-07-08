@@ -2,21 +2,14 @@ const express = require('express');
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const { Server } = require('socket.io');
-const { count } = require('console');
+// const { count } = require('console');
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// mongoose.connect('mongodb://localhost:27017/orders', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-
-console.log("Server started...............")
 var allOrders = [];
 
 app.prepare().then(() =>
@@ -31,46 +24,46 @@ app.prepare().then(() =>
 
   global.io = io;
 
-  
-  // const orderSchema = new mongoose.Schema({
-  //   tableNumber: Number,
-  //   items: [String],
-  //   count: Number,
-  //   status: String, // "pending", "preparing", "served"
-  // });
-
-  // const Order = mongoose.model('Order', orderSchema);
-
   server.use(cors());
   server.use(express.json());
 
 
-  server.post('/api/orders', async (req, res) =>
+
+  const serverDefensive = (func) =>
   {
     try {
+      func();
+    }
+    catch (error) {
+      console.error('----------------Error creating order:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+
+  server.post('/api/orders', async (req, res) =>
+  {
+    serverDefensive(() =>
+    {
       const { items } = req.body;
       allOrders.push(items);
       // await order.save();
-      io.emit('new-order', items); // Notify all clients about the new order
+      io.emit('updateKitchenOrders', allOrders);
       res.status(201).json(items);
-    } catch (error) {
-      console.error('Error creating order:', error);
-      res.status(500).send('Internal Server Error');
-    }
+    });
   });
 
-/*
-  app.get('/api/orders', async (req, res) =>
+  server.get('/api/orders', async (req, res) =>
   {
-    try {
-      const orders = await Order.find();
-      res.json(orders);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      res.status(500).send('Internal Server Error');
-    }
+    serverDefensive(() =>
+    {
+      res.status(200).json(allOrders);
+    });
   });
-  */
+
+
+
+
 
   io.on('connection', (socket) =>
   {

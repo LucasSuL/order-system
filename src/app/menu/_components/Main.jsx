@@ -354,41 +354,7 @@ const Main = () =>
     console.log(cart);
   };
 
-  const placeOrder = async () =>
-  {
-    console.log("Now placing order:");
-    try {
-      const response = await fetch('http://localhost:3000/api/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(
-          {
-            // tableNumber,
-            items: cart,
-          }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to submit order: ${errorText}`);
-      }
-
-      const responseData = await response.json();
-      console.log('Order response:', responseData);
-
-      alert('订单已提交');
-    } catch (error) {
-      console.error('catched error in placeOrder():', error);
-      alert(`Error submitting order: ${error.message}`);
-    }
-  };
-
   return (
-    <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
-      <div className="w-32 bg-white shadow-lg">
-        <ScrollArea className="mt-1">
     <div class="p-4 pt-24 flex overflow-hidden h-screen relative">
       <div class="w-32 bg-white">
         <ScrollArea className="mt-1 border">

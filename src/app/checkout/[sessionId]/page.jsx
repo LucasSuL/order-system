@@ -7,7 +7,45 @@ import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 
-const CheckoutPage = () => {
+// interface Order = {
+//   id: number;
+//   name: string;
+//   quantity: number;
+// };
+
+const placeOrder = async (cart) =>
+{
+  console.log("Now placing order:");
+  try {
+    const responseData = await fetch('http://localhost:3000/api/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(
+        {
+          // tableNumber,
+          items: cart,
+        }),
+    })
+      .then(response =>
+      {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Failed to submit order:', response.statusText);
+      });
+    console.log('Order response:-------------------', responseData);
+
+    alert('订单已提交');
+  } catch (error) {
+    console.error('catched error in placeOrder():', error);
+    alert(`Error submitting order: ${error.message}`);
+  }
+};
+
+const CheckoutPage = () =>
+{
   const searchParams = useSearchParams();
   const cart = JSON.parse(searchParams.get("cart"));
   const sum = searchParams.get("sum");
@@ -16,7 +54,7 @@ const CheckoutPage = () => {
   return (
     <div className="relative h-screen ">
       <Header />
-      <div class="p-2 pt-24 bg-slate-100">
+      <div className="p-2 pt-24 bg-slate-100">
         <div className="p-2 bg-white">
           <p className="">
             Table Number: <span className="font-bold">3A</span>
@@ -60,6 +98,7 @@ const CheckoutPage = () => {
         <Link
           href={"/"}
           className="w-1/3 bg-black p-1 text-center align-middle"
+          onClick={() => placeOrder(cart)}
         >
           <p className="font-bold text-lime-50 text-lg">Submit</p>
           <p className="text-sm text-gray-300">提交</p>
