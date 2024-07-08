@@ -29,7 +29,7 @@ app.prepare().then(() =>
 
 
 
-  const serverDefensive = (func) =>
+  const serverDefensive = (req, res, func) =>
   {
     try {
       func();
@@ -43,19 +43,25 @@ app.prepare().then(() =>
 
   server.post('/api/orders', async (req, res) =>
   {
-    serverDefensive(() =>
+    serverDefensive(req, res, () =>
     {
-      const { items } = req.body;
-      allOrders.push(items);
-      // await order.save();
+      const items = req.body; // cannot recognize
+
+      const filteredItems = items.map(item => ({
+        name: item.name,
+        quantity: item.quantity
+      }));
+      allOrders.push(...filteredItems);
+      // allOrders.push(items.map(i => i));
       io.emit('updateKitchenOrders', allOrders);
-      res.status(201).json(items);
+
+      res.status(201).json(filteredItems);
     });
   });
 
   server.get('/api/orders', async (req, res) =>
   {
-    serverDefensive(() =>
+    serverDefensive(req, res, () =>
     {
       res.status(200).json(allOrders);
     });

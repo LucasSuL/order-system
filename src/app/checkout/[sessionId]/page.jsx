@@ -7,7 +7,7 @@ import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 
-// interface Order = {
+// interface Order {
 //   id: number;
 //   name: string;
 //   quantity: number;
@@ -17,28 +17,34 @@ const placeOrder = async (cart) =>
 {
   console.log("Now placing order:");
   try {
+    console.log(cart.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+    })));
+    
     const responseData = await fetch('http://localhost:3000/api/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(
-        {
-          // tableNumber,
-          items: cart,
-        }),
+        cart.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+        }))),
     })
       .then(response =>
       {
         if (response.ok) {
           return response.json();
         }
-        throw new Error('Failed to submit order:', response.statusText);
+        throw new Error('Failed to submit order: ' + response.statusText);
       });
-    console.log('Order response:-------------------', responseData);
+    // console.log('Order response:-------------------', responseData);
 
     alert('订单已提交');
-  } catch (error) {
+  }
+  catch (error) {
     console.error('catched error in placeOrder():', error);
     alert(`Error submitting order: ${error.message}`);
   }
