@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 // interface Order {
 //   table: string;
@@ -15,19 +16,20 @@ import { Textarea } from "@/components/ui/textarea";
 // };
 const TestTable = "Testing table";
 
-const placeOrder = async (cart) =>
-{
+const placeOrder = async (cart) => {
   console.log("Now placing order:");
   try {
-    console.log(cart.map((item) => ({
-      name: item.name,
-      quantity: item.quantity,
-    })));
+    console.log(
+      cart.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+      }))
+    );
 
-    const responseData = await fetch('http://localhost:3000/api/orders', {
-      method: 'POST',
+    const responseData = await fetch("http://localhost:3000/api/orders", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(
         cart.map((item) => ({
@@ -35,67 +37,83 @@ const placeOrder = async (cart) =>
           name: item.name,
           quantity: item.quantity,
           remarks: item.remarks,
-        }))),
-    })
-      .then(response =>
-      {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Failed to submit order: ' + response.statusText);
-      });
+        }))
+      ),
+    }).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("Failed to submit order: " + response.statusText);
+    });
     // console.log('Order response:-------------------', responseData);
 
-    alert('订单已提交');
-  }
-  catch (error) {
-    console.error('catched error in placeOrder():', error);
+    alert("订单已提交");
+  } catch (error) {
+    console.error("catched error in placeOrder():", error);
     alert(`Error submitting order: ${error.message}`);
   }
 };
 
-const CheckoutPage = () =>
-{
+const CheckoutPage = () => {
   const searchParams = useSearchParams();
   const cart = JSON.parse(searchParams.get("cart"));
   const sum = searchParams.get("sum");
-  // console.log(cart);
+  const [userInput, setUserInput] = useState("");
+
+  const handleInputChange = (event) => {
+    setUserInput(event.target.value);
+  };
 
   return (
     <div className="relative h-screen ">
       <Header />
-      <div className="p-2 pt-24 bg-slate-100">
-        <div className="p-2 bg-white">
+      <div className="p-4 pt-40 pb-16 h-full bg-slate-100">
+        <div className="p-2 bg-white rounded-md">
           <p className="">
             Table Number: <span className="font-bold">3A</span>
           </p>
         </div>
 
-        <div className="p-2 bg-white mt-2">
+        <div className="p-2 bg-white mt-2 rounded-md">
           {cart.map((item, index) => (
-            <div key={index} className="mb-3">
-              <div className="flex justify-between align-middle">
-                <div className="flex flex-col">
-                  <p className="font-bold text-lg">{item.name_eng}</p>
-                  <p className="text-gray-500">{item.name}</p>
+            <div key={index} className="mb-3 flex justify-between align-top">
+              <div className="flex flex-col justify-between align-middle">
+                <div className="flex gap-2 mb-1">
+                  <p className="font-bold">{item.name_eng}</p>
+                  <p className="font-bold">{item.name}</p>
                 </div>
-                <div className="flex flex-col items-end">
-                  <p className="font-bold text-lg">${item.price}</p>
-                  <p>
-                    <span className="text-xs">x</span>
-                    {item.quantity}
-                  </p>
+                <div className="text-gray-500 text-sm">
+                  <p>{item.sauce}</p>
+                  {item.option.length > 0 ? (
+                    item.option.map((opt, index) => (
+                      <div key={index}>{opt}</div>
+                    ))
+                  ) : (
+                    <div></div>
+                  )}
+                  {item.special && <p>备注：{item.special}</p>}
                 </div>
+              </div>
+              <div className="flex flex-col items-end">
+                <p className="font-bold text-lg">${item.price}</p>
+                <p>
+                  <span className="text-xs">x</span>
+                  {item.amount}
+                </p>
               </div>
             </div>
           ))}
         </div>
-        <div className="bg-white mt-2 p-2">
-          <p className="mb-1">备注：</p>
-          <Textarea placeholder="Type your message here." id="message" />
+        <div className="bg-white mt-2 p-2 rounded-md">
+          <p className="mb-1">Special instruction: </p>
+          <Textarea
+            placeholder="Type your notes here."
+            value={userInput}
+            onChange={handleInputChange}
+          />{" "}
         </div>
-        <div className="bg-white mt-2 p-2 mb-16">
-          <p className="mb-1">推荐：</p>
+        <div className="bg-white mt-2 p-2 mb-16 rounded-md">
+          <p className="mb-1">Suggestion：</p>
         </div>
       </div>
       <footer className="fixed bottom-0 left-0 bg-black h-[60px] w-full z-50 flex">
@@ -107,11 +125,10 @@ const CheckoutPage = () =>
         </div>
         <Link
           href={"/"}
-          className="w-1/3 bg-black p-1 text-center align-middle"
+          className="w-1/3 bg-black p-1 m-0 flex justify-center items-center"
           onClick={() => placeOrder(cart)}
         >
-          <p className="font-bold text-lime-50 text-lg">Submit</p>
-          <p className="text-sm text-gray-300">提交</p>
+          <p className="font-bold text-lime-50 text-lg">Submit Order</p>
         </Link>
       </footer>
     </div>

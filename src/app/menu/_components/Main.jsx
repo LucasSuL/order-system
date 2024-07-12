@@ -29,6 +29,11 @@ const Main = () => {
   const handleSauceChange = (e) => setSelectedSauce(e.target.value);
   const [selectedSauce, setSelectedSauce] = useState("四川麻辣炸串酱");
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [userInput, setUserInput] = useState("");
+
+  const handleInputChange = (event) => {
+    setUserInput(event.target.value);
+  };
 
   const handleOptionChange = (event) => {
     const value = event.target.value;
@@ -61,11 +66,11 @@ const Main = () => {
     calcSum();
   }, [cart]);
 
-  const handleClick = (product) => {
-    const newProduct = { ...product, quantity: 1 };
-    setCart([...cart, newProduct]);
-    console.log(sum);
-  };
+  // const handleClick = (product) => {
+  //   const newProduct = { ...product, quantity: 1 };
+  //   setCart([...cart, newProduct]);
+  //   console.log(sum);
+  // };
 
   const handleAdd = (name) => {
     setCart(
@@ -89,21 +94,25 @@ const Main = () => {
     return cart.some((item) => item.name === name);
   };
 
-  const handleAddMenu = (event, name, price) => {
+  const handleAddMenu = (event, name, price, name_eng) => {
     event.preventDefault();
     setCart([
       ...cart,
       {
         name: name,
+        name_eng: name_eng,
         sauce: selectedSauce,
         option: selectedOptions,
         amount: amount,
         price: price,
+        special: userInput,
       },
     ]);
 
     // restore selection
     setSelectedSauce("四川麻辣炸串酱");
+    setAmount(1);
+    setUserInput("");
   };
 
   return (
@@ -263,7 +272,7 @@ const Main = () => {
                                   <fieldset className="grid grid-cols-2 gap-4">
                                     <div>
                                       <label
-                                        htmlFor="SpringOnion"
+                                        htmlFor="免葱 No Spring Onion"
                                         className="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-green-500 has-[:checked]:ring-1 has-[:checked]:ring-green-500"
                                       >
                                         <div>
@@ -275,8 +284,8 @@ const Main = () => {
                                         <input
                                           type="checkbox"
                                           name="DeliveryOption"
-                                          value="SpringOnion"
-                                          id="SpringOnion"
+                                          value="免葱 No Spring Onion"
+                                          id="免葱 No Spring Onion"
                                           className="sr-only"
                                           onChange={handleOptionChange}
                                         />
@@ -285,7 +294,7 @@ const Main = () => {
 
                                     <div>
                                       <label
-                                        htmlFor="DeliveryPriority"
+                                        htmlFor="加辣 Extra Spicy"
                                         className="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-green-500 has-[:checked]:ring-1 has-[:checked]:ring-green-500"
                                       >
                                         <div>
@@ -301,8 +310,8 @@ const Main = () => {
                                         <input
                                           type="checkbox"
                                           name="DeliveryOption"
-                                          value="DeliveryPriority"
-                                          id="DeliveryPriority"
+                                          value="加辣 Extra Spicy"
+                                          id="加辣 Extra Spicy"
                                           className="sr-only"
                                           onChange={handleOptionChange}
                                         />
@@ -312,7 +321,11 @@ const Main = () => {
                                   <p className="font-bold mb-1 mt-3">
                                     Special Instruction:
                                   </p>
-                                  <Textarea placeholder="Type your notes here." />
+                                  <Textarea
+                                    placeholder="Type your notes here."
+                                    value={userInput}
+                                    onChange={handleInputChange}
+                                  />
                                 </div>
                               </div>
 
@@ -357,7 +370,8 @@ const Main = () => {
                                     handleAddMenu(
                                       event,
                                       product.name,
-                                      product.price
+                                      product.price,
+                                      product.name_eng
                                     )
                                   }
                                 >
@@ -391,13 +405,12 @@ const Main = () => {
           </div>
           <Link
             href={{
-              pathname: `/checkout/${sessionId}`,
+              pathname: `/menu/checkout/${sessionId}`,
               query: { cart: JSON.stringify(cart), sum: sum },
             }}
             className="w-1/3 bg-black p-1 m-0 flex justify-center items-center"
           >
             <p className="font-bold text-lime-50 text-lg">Checkout </p>
-            {/* <p className="text-sm text-gray-300">结算 </p> */}
           </Link>
         </footer>
       )}
