@@ -7,7 +7,7 @@ export async function POST(req)
   try {
 
     const { items } = await req.json();
-    console.log('Received order:', items);
+    console.log('+++++++++++++++++++++++++++++++Received order:', items);
     // items.map(i => order.push(i));
     orders.push(items);
 
