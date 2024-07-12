@@ -19,6 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { Textarea } from "@/components/ui/textarea";
 
 const Main = () => {
   const [goal, setGoal] = useState(1);
@@ -84,10 +85,10 @@ const Main = () => {
   return (
     <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
       <div className="w-32 bg-white">
-        <ScrollArea className="mt-1 border">
+        <ScrollArea className="mt-1 pe-2">
           <div className="">
             {tags.map((tag) => (
-              <div key={tag} className="text-sm text-gray-600 mb-8">
+              <div key={tag} className="text-sm text-gray-600 mb-4">
                 <Link
                   href={`#${tag}`}
                   className="hover:font-bold hover:text-black"
@@ -154,18 +155,18 @@ const Main = () => {
                         <Drawer>
                           <DrawerTrigger asChild>
                             <Button size="xs" className="px-2">
-                              加入Add
+                              Add
                             </Button>
                           </DrawerTrigger>
                           <DrawerContent>
-                            <div className="p-2 px-4 w-full max-w-sm">
+                            <div className="p-2 px-4 w-full max-w-sm ">
                               <div className="w-full">
-                                <Image
+                                {/* <Image
                                   src={product.img}
                                   alt="img"
-                                  width={200}
-                                  height={200}
-                                ></Image>
+                                  width={150}
+                                  height={150}
+                                ></Image> */}
                                 <p className="mt-2 font-bold text-2xl">
                                   {product.name_eng}{" "}
                                   <span className="font-medium">
@@ -280,12 +281,16 @@ const Main = () => {
                                       </label>
                                     </div>
                                   </fieldset>
+                                  <p className="font-bold mb-1 mt-3">
+                                  Special Instruction:
+                                  </p>
+                                  <Textarea placeholder="Type your notes here." />
                                 </div>
                               </div>
 
                               <div className="p-4 pb-0">
                                 <div className="flex justify-between align-middle">
-                                  <div className="flex align-middle">
+                                  <div className="flex align-middle gap-3">
                                     <p className="mt-1">Amount </p>
                                     <Button
                                       variant="outline"
@@ -319,7 +324,7 @@ const Main = () => {
                                 </div>
                               </div>
                               <DrawerFooter>
-                                <Button>Submit</Button>
+                                <Button>Add</Button>
                                 <DrawerClose asChild>
                                   <Button variant="outline">Cancel</Button>
                                 </DrawerClose>

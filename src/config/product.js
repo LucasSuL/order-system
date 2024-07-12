@@ -1,21 +1,22 @@
 export const tags = [
-  "烤串",
-  "主食",
-  "饮料",
-  "凉菜",
-  "热菜",
-  "甜品",
-  "汤类",
-  "烧烤",
-  "海鲜",
-  "素菜",
-  "肉类",
-  "小吃",
+  "🍡 Barbecue Skewers 烤串",
+  "🍚 Staple Food 主食",
+  "🍺 Drinks 饮料",
+  "🥗 Cold Dishes 凉菜",
+  "🍲 Hot Dishes 热菜",
+  "🍦 Desserts 甜品",
+  "🥣 Soups 汤类",
+  "🥩 Grilled 烧烤",
+  "🦀 Seafood 海鲜",
+  "🥦 Vegetarian 素菜",
+  "🍖 Meat 肉类",
+  "🍩 Snacks 小吃",
 ];
+
 
 export const foods = [
   {
-    cat: "烤串",
+    cat: "🍡 Barbecue Skewers 烤串",
     products: [
       {
         id: 1,
@@ -60,7 +61,7 @@ export const foods = [
     ],
   },
   {
-    cat: "主食",
+    cat: "🍚 Staple Food 主食",
     products: [
       {
         id: 6,
@@ -81,7 +82,7 @@ export const foods = [
     ],
   },
   {
-    cat: "饮料",
+    cat: "🍺 Drinks 饮料",
     products: [
       {
         id: 8,
@@ -118,7 +119,7 @@ export const foods = [
     ],
   },
   {
-    cat: "凉菜",
+    cat: "🥗 Cold Dishes 凉菜",
     products: [
       {
         id: 12,
@@ -139,7 +140,7 @@ export const foods = [
     ],
   },
   {
-    cat: "热菜",
+    cat: "🍲 Hot Dishes 热菜",
     products: [
       {
         id: 14,
@@ -160,7 +161,7 @@ export const foods = [
     ],
   },
   {
-    cat: "甜品",
+    cat: "🍦 Desserts 甜品",
     products: [
       {
         id: 16,
@@ -181,7 +182,7 @@ export const foods = [
     ],
   },
   {
-    cat: "汤类",
+    cat: "🥣 Soups 汤类",
     products: [
       {
         id: 18,
@@ -202,7 +203,7 @@ export const foods = [
     ],
   },
   {
-    cat: "烧烤",
+    cat: "🥩 Grilled 烧烤",
     products: [
       {
         id: 20,
@@ -223,7 +224,7 @@ export const foods = [
     ],
   },
   {
-    cat: "海鲜",
+    cat: "🦀 Seafood 海鲜",
     products: [
       {
         id: 22,
@@ -244,7 +245,7 @@ export const foods = [
     ],
   },
   {
-    cat: "素菜",
+    cat: "🥦 Vegetarian 素菜",
     products: [
       {
         id: 24,
@@ -265,7 +266,7 @@ export const foods = [
     ],
   },
   {
-    cat: "肉类",
+    cat: "🍖 Meat 肉类",
     products: [
       {
         id: 26,
@@ -286,7 +287,7 @@ export const foods = [
     ],
   },
   {
-    cat: "小吃",
+    cat: "🍩 Snacks 小吃",
     products: [
       {
         id: 28,
