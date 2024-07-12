@@ -26,10 +26,10 @@ const Main = () => {
   const [sum, setSum] = useState(0);
   const [sessionId, setSessionId] = useState("");
   const handleSauceChange = (e) => setSelectedSauce(e.target.value);
-  const [selectedSauce, setSelectedSauce] = useState('四川麻辣炸串酱');
+  const [selectedSauce, setSelectedSauce] = useState("四川麻辣炸串酱");
 
   function onClick(adjustment) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)));
+    setGoal(goal + adjustment);
   }
 
   useEffect(() => {
@@ -174,13 +174,13 @@ const Main = () => {
                                 </p>
                                 <p> {product.desc}</p>
                                 <div className="bg-slate-200 p-2 mt-5 rounded-md">
-                                  <p className="font-bold mb-2">
-                                    Sauce Choice:
+                                  <p className="font-bold mb-1">
+                                    Sauce Choice (1 max):
                                   </p>
                                   <fieldset className="space-y-3">
                                     <div>
                                       <label
-                                        htmlFor="DeliveryStandard"
+                                        htmlFor="SourceOp1"
                                         className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
                                       >
                                         <p className="text-gray-700">
@@ -192,9 +192,9 @@ const Main = () => {
 
                                         <input
                                           type="radio"
-                                          name="DeliveryOption"
+                                          name="SauceOption"
                                           value="四川麻辣炸串酱"
-                                          id="DeliveryStandard"
+                                          id="SourceOp1"
                                           className="sr-only"
                                           checked={
                                             selectedSauce === "四川麻辣炸串酱"
@@ -206,7 +206,7 @@ const Main = () => {
 
                                     <div>
                                       <label
-                                        htmlFor="DeliveryPriority"
+                                        htmlFor="SauceOp2"
                                         className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
                                       >
                                         <p className="text-gray-700">
@@ -218,9 +218,9 @@ const Main = () => {
 
                                         <input
                                           type="radio"
-                                          name="DeliveryOption"
+                                          name="SauceOption"
                                           value="麻辣底炸串酱微辣"
-                                          id="DeliveryPriority"
+                                          id="SauceOp2"
                                           className="sr-only"
                                           checked={
                                             selectedSauce === "麻辣底炸串酱微辣"
@@ -230,46 +230,91 @@ const Main = () => {
                                       </label>
                                     </div>
                                   </fieldset>
+                                  <p className="font-bold mb-1 mt-3">
+                                    Other option (2 max):
+                                  </p>
+                                  <fieldset className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <label
+                                        htmlFor="SpringOnion"
+                                        className="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-green-500 has-[:checked]:ring-1 has-[:checked]:ring-green-500"
+                                      >
+                                        <div>
+                                          <p className="text-gray-700">
+                                            免葱 No Spring Onion
+                                          </p>
+                                        </div>
+
+                                        <input
+                                          type="checkbox"
+                                          name="DeliveryOption"
+                                          value="SpringOnion"
+                                          id="SpringOnion"
+                                          className="sr-only"
+                                        />
+                                      </label>
+                                    </div>
+
+                                    <div>
+                                      <label
+                                        htmlFor="DeliveryPriority"
+                                        className="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 has-[:checked]:border-green-500 has-[:checked]:ring-1 has-[:checked]:ring-green-500"
+                                      >
+                                        <div>
+                                          <p className="text-gray-700">
+                                            加辣 Extra Spicy
+                                          </p>
+
+                                          <p className="text-gray-900">
+                                            (free)
+                                          </p>
+                                        </div>
+
+                                        <input
+                                          type="checkbox"
+                                          name="DeliveryOption"
+                                          value="DeliveryPriority"
+                                          id="DeliveryPriority"
+                                          className="sr-only"
+                                        />
+                                      </label>
+                                    </div>
+                                  </fieldset>
                                 </div>
                               </div>
 
                               <div className="p-4 pb-0">
-                                <div className="flex items-center justify-center space-x-2">
-                                  <div className="flex justify-between">
-                                    <div className="">
-                                      <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8 shrink-0 rounded-full"
-                                        onClick={() => onClick(-1)}
-                                        disabled={goal <= 1}
-                                      >
-                                        <Minus className="h-4 w-4" />
-                                        <span className="sr-only">
-                                          Decrease
-                                        </span>
-                                      </Button>
-                                      <div className="text-7xl font-bold tracking-tighter">
-                                        {goal}
-                                      </div>
+                                <div className="flex justify-between align-middle">
+                                  <div className="flex align-middle">
+                                    <p className="mt-1">Amount </p>
+                                    <Button
+                                      variant="outline"
+                                      size="icon"
+                                      className="h-8 w-8 shrink-0 rounded-full"
+                                      onClick={() => onClick(-1)}
+                                      disabled={goal <= 1}
+                                    >
+                                      <Minus className="h-4 w-4" />
+                                      <span className="sr-only">Decrease</span>
+                                    </Button>
 
-                                      <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8 shrink-0 rounded-full"
-                                        onClick={() => onClick(1)}
-                                        // disabled={goal >= 400}
-                                      >
-                                        <Plus className="h-4 w-4" />
-                                        <span className="sr-only">
-                                          Increase
-                                        </span>
-                                      </Button>
+                                    <div className="text-2xl font-bold tracking-tighter">
+                                      {goal}
                                     </div>
 
-                                    <div className="text-[0.90rem] uppercase text-muted-foreground">
-                                      份
-                                    </div>
+                                    <Button
+                                      variant="outline"
+                                      size="icon"
+                                      className="h-8 w-8 shrink-0 rounded-full"
+                                      onClick={() => onClick(1)}
+                                    >
+                                      <Plus className="h-4 w-4" />
+                                      <span className="sr-only">Increase</span>
+                                    </Button>
+                                  </div>
+
+                                  <div className="text-[0.90rem] uppercase text-muted-foreground mt-1">
+                                    份
                                   </div>
                                 </div>
                               </div>
