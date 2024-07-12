@@ -22,15 +22,25 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const Main = () => {
-  const [goal, setGoal] = useState(1);
+  const [amount, setAmount] = useState(1);
   const [cart, setCart] = useState([]);
   const [sum, setSum] = useState(0);
   const [sessionId, setSessionId] = useState("");
   const handleSauceChange = (e) => setSelectedSauce(e.target.value);
   const [selectedSauce, setSelectedSauce] = useState("四川麻辣炸串酱");
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleOptionChange = (event) => {
+    const value = event.target.value;
+    setSelectedOptions((prevSelectedOptions) =>
+      prevSelectedOptions.includes(value)
+        ? prevSelectedOptions.filter((option) => option !== value)
+        : [...prevSelectedOptions, value]
+    );
+  };
 
   function onClick(adjustment) {
-    setGoal(goal + adjustment);
+    setAmount(amount + adjustment);
   }
 
   useEffect(() => {
@@ -39,8 +49,9 @@ const Main = () => {
   }, []);
 
   const calcSum = () => {
+    console.log(111);
     const sum = cart.reduce(
-      (sum, item) => sum + parseFloat(item.price) * item.quantity,
+      (sum, item) => sum + parseFloat(item.price) * item.amount,
       0
     );
     setSum(sum);
@@ -59,7 +70,7 @@ const Main = () => {
   const handleAdd = (name) => {
     setCart(
       cart.map((item) =>
-        item.name === name ? { ...item, quantity: item.quantity + 1 } : item
+        item.name === name ? { ...item, amount: item.amount + 1 } : item
       )
     );
   };
@@ -68,9 +79,9 @@ const Main = () => {
     setCart(
       cart
         .map((item) =>
-          item.name === name ? { ...item, quantity: item.quantity - 1 } : item
+          item.name === name ? { ...item, amount: item.amount - 1 } : item
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.amount > 0)
     );
   };
 
@@ -78,27 +89,42 @@ const Main = () => {
     return cart.some((item) => item.name === name);
   };
 
-  const handleSubmit = () => {
-    console.log(cart);
+  const handleAddMenu = (event, name, price) => {
+    event.preventDefault();
+    setCart([
+      ...cart,
+      {
+        name: name,
+        sauce: selectedSauce,
+        option: selectedOptions,
+        amount: amount,
+        price: price,
+      },
+    ]);
+
+    // restore selection
+    setSelectedSauce("四川麻辣炸串酱");
   };
 
   return (
-    <div className="p-4 pt-24 flex overflow-hidden h-screen relative">
+    <div
+      className={`p-4 pt-40 ${
+        cart.length > 0 ? "pb-16" : ""
+      } flex overflow-hidden h-screen relative`}
+    >
       <div className="w-32 bg-white">
-        <ScrollArea className="mt-1 pe-2">
-          <div className="">
-            {tags.map((tag) => (
-              <div key={tag} className="text-sm text-gray-600 mb-4">
-                <Link
-                  href={`#${tag}`}
-                  className="hover:font-bold hover:text-black"
-                >
-                  {tag}
-                </Link>
-                {/* <Separator className="mt-3" /> */}
-              </div>
-            ))}
-          </div>
+        <ScrollArea className="mt-1 pe-2 h-full">
+          {tags.map((tag) => (
+            <div key={tag} className="text-sm text-gray-600 mb-4">
+              <Link
+                href={`#${tag}`}
+                className="hover:font-bold hover:text-black"
+              >
+                {tag}
+              </Link>
+              {/* <Separator className="mt-3" /> */}
+            </div>
+          ))}
         </ScrollArea>
       </div>
 
@@ -139,7 +165,7 @@ const Main = () => {
                           <span>
                             {
                               cart.find((item) => item.name === product.name)
-                                .quantity
+                                .amount
                             }
                           </span>
                           <Button
@@ -252,6 +278,7 @@ const Main = () => {
                                           value="SpringOnion"
                                           id="SpringOnion"
                                           className="sr-only"
+                                          onChange={handleOptionChange}
                                         />
                                       </label>
                                     </div>
@@ -277,12 +304,13 @@ const Main = () => {
                                           value="DeliveryPriority"
                                           id="DeliveryPriority"
                                           className="sr-only"
+                                          onChange={handleOptionChange}
                                         />
                                       </label>
                                     </div>
                                   </fieldset>
                                   <p className="font-bold mb-1 mt-3">
-                                  Special Instruction:
+                                    Special Instruction:
                                   </p>
                                   <Textarea placeholder="Type your notes here." />
                                 </div>
@@ -297,14 +325,14 @@ const Main = () => {
                                       size="icon"
                                       className="h-8 w-8 shrink-0 rounded-full"
                                       onClick={() => onClick(-1)}
-                                      disabled={goal <= 1}
+                                      disabled={amount <= 1}
                                     >
                                       <Minus className="h-4 w-4" />
                                       <span className="sr-only">Decrease</span>
                                     </Button>
 
                                     <div className="text-2xl font-bold tracking-tighter">
-                                      {goal}
+                                      {amount}
                                     </div>
 
                                     <Button
@@ -324,7 +352,18 @@ const Main = () => {
                                 </div>
                               </div>
                               <DrawerFooter>
-                                <Button>Add</Button>
+                                <Button
+                                  onClick={(event) =>
+                                    handleAddMenu(
+                                      event,
+                                      product.name,
+                                      product.price
+                                    )
+                                  }
+                                >
+                                  Add
+                                </Button>
+
                                 <DrawerClose asChild>
                                   <Button variant="outline">Cancel</Button>
                                 </DrawerClose>
@@ -355,10 +394,10 @@ const Main = () => {
               pathname: `/checkout/${sessionId}`,
               query: { cart: JSON.stringify(cart), sum: sum },
             }}
-            className="w-1/3 bg-black p-1 text-center align-middle"
+            className="w-1/3 bg-black p-1 m-0 flex justify-center items-center"
           >
             <p className="font-bold text-lime-50 text-lg">Checkout </p>
-            <p className="text-sm text-gray-300">结算 </p>
+            {/* <p className="text-sm text-gray-300">结算 </p> */}
           </Link>
         </footer>
       )}
