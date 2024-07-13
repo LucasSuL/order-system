@@ -2,12 +2,59 @@
 
 import Header from "@/app/menu/_components/Header";
 import { useSearchParams } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
-const testTable = "Testing table";
+// interface Order {
+//   table: string;
+//   name: string;
+//   quantity: number;
+//   remarks?: string;
+// };
+const TestTable = "Testing table";
+
+const placeOrder = async (cart) => {
+  console.log("Now placing order:");
+  try {
+    console.log(
+      cart.map((item) => ({
+        name: item.name,
+        amount: item.amount,
+      }))
+    );
+
+    const responseData = await fetch("http://localhost:3000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(
+        cart.map((item) => ({
+          table: TestTable,
+          name: item.name,
+          amount: item.amount,
+          sauce: item.sauce,
+          option: item.option,
+          special: item.special,
+        }))
+      ),
+    }).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error("Failed to submit order: " + response.statusText);
+    });
+    // console.log('Order response:-------------------', responseData);
+
+    alert("订单已提交");
+  } catch (error) {
+    console.error("catched error in placeOrder():", error);
+    alert(`Error submitting order: ${error.message}`);
+  }
+};
 
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
@@ -17,27 +64,6 @@ const CheckoutPage = () => {
 
   const handleInputChange = (event) => {
     setUserInput(event.target.value);
-  };
-
-  const placeOrder = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cart),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit order: " + response.statusText);
-      }
-
-      alert("订单已提交");
-    } catch (error) {
-      console.error("Caught error in placeOrder():", error);
-      alert(`Error submitting order: ${error.message}`);
-    }
   };
 
   return (
@@ -102,7 +128,7 @@ const CheckoutPage = () => {
         <Link
           href={"/"}
           className="w-1/3 bg-black p-1 m-0 flex justify-center items-center"
-          onClick={() => placeOrder()}
+          onClick={() => placeOrder(cart)}
         >
           <p className="font-bold text-lime-50 text-lg">Submit Order</p>
         </Link>
