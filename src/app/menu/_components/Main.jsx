@@ -194,7 +194,20 @@ const Main = () => {
                             </Button>
                           </DrawerTrigger>
                           <DrawerContent>
-                            <div className="p-2 px-4 w-full max-w-sm ">
+                            <DrawerHeader>
+                              <DrawerTitle>
+                                <p className="font-bold text-2xl">
+                                  {product.name_eng}
+                                  <span className="font-medium ms-2">
+                                    {product.name}
+                                  </span>
+                                </p>
+                              </DrawerTitle>
+                              <DrawerDescription>
+                                {product.desc}
+                              </DrawerDescription>
+                            </DrawerHeader>
+                            <div className="p-2 px-4 w-full max-w-sm">
                               <div className="w-full">
                                 {/* <Image
                                   src={product.img}
@@ -202,13 +215,7 @@ const Main = () => {
                                   width={150}
                                   height={150}
                                 ></Image> */}
-                                <p className="mt-2 font-bold text-2xl">
-                                  {product.name_eng}{" "}
-                                  <span className="font-medium">
-                                    {product.name}
-                                  </span>
-                                </p>
-                                <p> {product.desc}</p>
+
                                 <div className="bg-slate-200 p-2 mt-5 rounded-md">
                                   <p className="font-bold mb-1">
                                     Sauce Choice (1 max):
@@ -332,7 +339,7 @@ const Main = () => {
                               <div className="p-4 pb-0">
                                 <div className="flex justify-between align-middle">
                                   <div className="flex align-middle gap-3">
-                                    <p className="mt-1">Amount </p>
+                                    <p className="mt-1">Quantity: </p>
                                     <Button
                                       variant="outline"
                                       size="icon"
